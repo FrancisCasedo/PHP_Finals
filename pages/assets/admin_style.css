@@ -1,0 +1,33 @@
+.container{
+    display: flex;
+    flex-direction: row;
+}
+p{
+    font-family: 'Space Grotesk', sans-serif;
+}
+.left{
+    display: flex;
+    flex-direction: column;
+    margin-left: 10%;
+    margin-top: 10%;
+    width: 20%;
+    border: 1px solid grey ;
+}
+.left-header{
+    border-bottom: 1px solid grey;
+    p{
+        font-size: 1rem;
+        padding: 2% 0% 2% 5%;
+        font-weight: bold;
+    }
+}
+
+
+button[name="btn1"],button[name="btn2"],button[name="btn3"],button[name="btn4"],button[name="btn5"]
+,button[name="btn6"]{
+    width: 100%;
+    padding: .4% 0% .4% 0%;
+    background-color: white;
+    border: 1px solid grey;
+    font-size: .7rem;
+}

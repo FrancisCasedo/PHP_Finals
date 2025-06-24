@@ -78,29 +78,39 @@ function button4Action()
 <?php }
 function main()
 { ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/admin_style.css">
+    <title>Document</title>
+</head>
+<body>
+    
     <div class="container">
-        <form method="post">
-            <div class="left">
-                <div class="left-header">
-                    //icon para sa dashboard
-                    <h1>Tools</h1>
-                </div>
-                <div>
-                    <p>Welcome to the admin dashboard. Please select an action below:</p>
-                    <button type="submit" name="btn1">Add Party</button>
-                    <button type="submit" name="btn2">Add Position</button>
-                    <button type="submit" name="btn3">Add Candidate</button>
-                    <button type="submit" name="btn4">Add Voters</button>
-                    <button type="submit" name="btn5">Results</button>
-                </div>
-                <button type="submit" name="btn4">Delete Database</button>
+        <div class="left">
+            <div class="left-header">
+                <p name ="Welcome">Welcome to the admin dashboard.</p>
+                <!-- icon dapat nandito-->
             </div>
-        </form>
+            <div class = "selection">
+                    <form method="post">
+                    
+                    <button type="submit" name="btn1"><p>Add Party</p></button><br>
+                    <button type="submit" name="btn2"><p>Add Position</p></button><br>
+                    <button type="submit" name="btn3"><p>Add Candidate</p></button><br>
+                    <button type="submit" name="btn4"><p>Add Voters</p></button><br>
+                    <button type="submit" name="btn5"><p>Results</p></button><br>
+                </div>
+                <button type="submit" name="btn6">Delete Database</button>
+            </form>
+            </div>
         <div class="right">
             <?php
             rightHeader();
             if (isset($_POST['btn1'])) {
-
+    
                 button1Action();
             } elseif (isset($_POST['btn2'])) {
                 echo "<h1>Add Position</h1>";
@@ -115,6 +125,8 @@ function main()
             ?>
         </div>
     </div>
-<?php } ?>
+    <?php } ?>
+</body>
+</html>
 
 <?php main() ?>
