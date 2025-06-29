@@ -1,8 +1,9 @@
 .container{
     display: flex;
     flex-direction: row;
+    width: 80%;
 }
-p{
+*{
     font-family: 'Space Grotesk', sans-serif;
 }
 .left{
@@ -10,11 +11,12 @@ p{
     flex-direction: column;
     margin-left: 10%;
     margin-top: 10%;
-    width: 20%;
-    border: 1px solid grey ;
+    width: 30%;
+    border: 1px solid rgba(124, 124, 124, .5);
+    align-self: flex-start;
 }
 .left-header{
-    border-bottom: 1px solid grey;
+    border-bottom: 1px solid rgba(124, 124, 124, .5);
     p{
         font-size: 1rem;
         padding: 2% 0% 2% 5%;
@@ -31,3 +33,89 @@ button[name="btn1"],button[name="btn2"],button[name="btn3"],button[name="btn4"],
     border: 1px solid grey;
     font-size: .7rem;
 }
+
+
+.right{
+    display: flex;
+    flex-direction: column;
+    margin-top: 5%;
+    border-left: 1px solid rgba(124, 124, 124, .5);
+    margin-left: 8%;
+    row-gap: 8%;
+    width: 80%;
+    overflow-y: auto;
+}
+.RightHeader{
+    padding-bottom: 2%;
+    margin: 0% 0% 0% 5%;
+    width: 80%;
+    height: 10%;
+    border-bottom: 1px solid rgba(124, 124, 124, .5);
+}
+
+.AddParty{
+    display: flex;
+    margin-left: 5%;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(124, 124, 124, .5);
+    width: 80%;
+    padding-bottom: 6%;
+
+}
+
+input[name = "PartyName"]{
+    width: 130%;
+    margin-top: 5%;
+    padding: 1% 1% 1% 2%;
+    border: 1px solid grey;
+    border-radius: 5px;
+}
+
+button[name = "AddParty"]{
+    border-radius: 5px;
+    width: 40%;
+    padding: 2% 1% 2% 0%;
+    margin: 3% 3% 0% 0%;
+    background-color: #DBF0FE;
+    border: 1px solid grey;
+    font-size: .7rem;
+    margin-left: 2%;
+}
+
+.PartyList{
+    display:flex;
+    flex-direction: row;
+    padding-left: 5%;
+}
+
+.PartyList table{
+    width: 80%;
+    border-collapse: collapse;
+}
+
+td[name = "PartyID"],td[name = "action"]{
+    padding-left:7%;
+}
+
+td[name = "PartyName"]{
+    padding-left: 6%;
+}
+
+th[name = "action"]{
+    width: 40%;
+}
+
+button[name = "delete"],button[name = "edit"]{
+    width: 40%;
+    padding: 1% 0% 1% 0%;
+    background-color: #DBF0FE;
+    border: 1px solid grey;
+    border-radius: 5px;
+}
+
+.PartyList th{
+    border-left: 1px solid rgba(124, 124, 124, .5);
+    border-right: 1px solid rgba(124, 124, 124, .5);
+    padding: 1% 2% 1% 2%;
+    font-weight: 600;
+}   
