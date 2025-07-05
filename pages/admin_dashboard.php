@@ -136,7 +136,7 @@ function main()
     <body>
 
         <div class="container">
-            <div class="left">
+            `<div class="left">
                 <div class="left-header">
                     <p name="Welcome">Welcome to the admin dashboard.</p>
                     <!-- icon dapat nandito-->
@@ -161,7 +161,7 @@ function main()
                         </button><br>
                 </div>
                 <button type="submit" name="btn6">Delete Database</button>
-                </form>
+                </form>`
             </div>
             <div class="right">
                 <?php
