@@ -1,8 +1,9 @@
+
 <?php
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "voter";
+$dbname = "election_database";
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -11,22 +12,48 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
+$stmt_party_list = $conn->prepare("SELECT * FROM partylist");
+$stmt_party_list->execute();
+$count_party_list = $stmt_party_list->rowCount();
+$rows_party_list = $stmt_party_list->fetchAll(PDO::FETCH_ASSOC);
+
+$stmt_candidate = $conn->prepare("SELECT * FROM candidate");
+$stmt_candidate->execute();
+$count_candidate = $stmt_candidate->rowCount();
+$rows_candidate = $stmt_candidate->fetchAll(PDO::FETCH_ASSOC);
+
+$stmt_positions = $conn->prepare("SELECT * FROM positions");
+$stmt_positions->execute();
+$count_positions = $stmt_positions->rowCount();
+$rows_positions = $stmt_positions->fetchAll(PDO::FETCH_ASSOC);
+
+$stmt_voters = $conn->prepare("SELECT * FROM voters");
+$stmt_voters->execute();
+$count_voters = $stmt_voters->rowCount();
+$rows_voters = $stmt_voters->fetchAll(PDO::FETCH_ASSOC);
+
+?>
+
+<?php
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
     $student_no = $_POST['student_no'];
     $fname = $_POST['fname'];
     $mi = $_POST['mi'];
     $lastname = $_POST['lastname'];
     $course = $_POST['course'];
+    $password = $_POST['voter_password'];
 
-    $sql = "INSERT INTO voters (student_no, fname, mi, lastname, course)
-            VALUES (:student_no, :fname, :mi, :lastname, :course)";
+    $sql = "INSERT INTO voters (student_number, first_name, middle_initial, last_name, Course,VoterPassword)
+            VALUES (:student_no, :fname, :mi, :lastname, :course, :VoterPassword)";
     $stmt = $conn->prepare($sql);
     $stmt->execute([
         ':student_no' => $student_no,
         ':fname' => $fname,
         ':mi' => $mi,
         ':lastname' => $lastname,
-        ':course' => $course
+        ':course' => $course,
+        ':VoterPassword' => $password
     ]);
 }
 
@@ -38,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
     $lastname = $_POST['lastname'];
     $course = $_POST['course'];
 
-    $sql = "UPDATE voters SET student_no=:student_no, fname=:fname, mi=:mi, lastname=:lastname, course=:course WHERE ID=:id";
+    $sql = "UPDATE voters SET student_no=:student_no, fname=:fname, mi=:mi, lastname=:lastname, course=:course, VoterPassword =:VoterPassword WHERE ID=:id";
     $stmt = $conn->prepare($sql);
     $stmt->execute([
         ':student_no' => $student_no,
@@ -46,7 +73,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
         ':mi' => $mi,
         ':lastname' => $lastname,
         ':course' => $course,
-        ':id' => $id
+        ':id' => $id,
+        ':VoterPassword' => $VoterPassword
     ]);
     header("Location: voter.php");
     exit();
@@ -55,22 +83,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
     $sql = "DELETE FROM voters WHERE ID=:id";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([':id' => $id]);
+    $stmt_d_voter = $conn->prepare($sql);
+    $stmt_d_voter->execute([':id' => $id]);
     header("Location: voter.php");
     exit();
 }
 
 $edit_mode = false;
-$edit_data = ['ID'=>'','student_no'=>'', 'fname'=>'', 'mi'=>'', 'lastname'=>'', 'course'=>''];
+$edit_data = ['ID'=>'','student_no'=>'', 'fname'=>'', 'mi'=>'', 'lastname'=>'', 'course'=>'', 'VoterPassword'=>''];
 
 if (isset($_GET['edit'])) {
     $edit_mode = true;
     $id = $_GET['edit'];
     $sql = "SELECT * FROM voters WHERE ID=:id";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([':id' => $id]);
-    $result_edit = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt_e_voter = $conn->prepare($sql);
+    $stmt_e_voter->execute([':id' => $id]);
+    $result_edit = $stmt_e_voter->fetch(PDO::FETCH_ASSOC);
     if ($result_edit) {
         $edit_data = $result_edit;
     }
@@ -94,7 +122,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <h1><?php echo $edit_mode ? "Edit voter" : "Add Voter"; ?></h1>
         <hr class="divider">
         <form method="Post" action="">
-            <input type="hidden" name="id" value="<?php echo $edit_data['ID']; ?>">
+            <input type="hidden" name="id" value="<?php echo $edit_data['id']; ?>">
             <label>Student Number:</label><br>
             <input type="text" name="student_no" value="<?php echo $edit_data['student_no']; ?>" required><br>
 
@@ -106,6 +134,8 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <input type="text" name="lastname" value="<?php echo $edit_data['lastname']; ?>" required><br>
             <label>Course:</label><br>
             <input type="text" name="course" value="<?php echo $edit_data['course']; ?>" required><br>
+            <label>Password:</label><br>
+            <input type="text" name="voter_password" value="<?php echo $edit_data['VoterPassword']; ?>" required><br>
 
             <?php if ($edit_mode): ?>
             <input type="submit" name="update" value="update">
@@ -126,21 +156,23 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <th>MI</th>
                 <th>Last Name</th>
                 <th>Course</th>
+                <th>VoterPassword</th>
                 <th>Action</th>
             </tr>
             <?php
             $i = 1;
             foreach ($result as $row) {
                 echo "<tr>
-                        <td>{$i}</td>
-                        <td>{$row['student_no']}</td>
-                        <td>{$row['fname']}</td>
-                        <td>{$row['mi']}</td>
-                        <td>{$row['lastname']}</td>
-                        <td>{$row['course']}</td>
+                        <td>{$row['id']}</td>
+                        <td>{$row['student_number']}</td>
+                        <td>{$row['first_name']}</td>
+                        <td>{$row['middle_initial']}</td>
+                        <td>{$row['last_name']}</td>
+                        <td>{$row['Course']}</td>
+                        <td>{$row['VoterPassword']}</td>
                         <td>
-                            <a href='?edit={$row['ID']}'>Edit</a> |
-                            <a href='?delete={$row['ID']}' onclick=\"return confirm('Are you sure?')\">Delete</a>
+                            <a href='?edit={$row['id']}'>Edit</a> |
+                            <a href='?delete={$row['id']}' onclick=\"return confirm('Are you sure?')\">Delete</a>
                         </td>
                     </tr>";
                 $i++;

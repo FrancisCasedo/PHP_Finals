@@ -1,6 +1,26 @@
 
 <?php require_once "../config.php" ?>
 
+<?php
+if (!isset($rows_party_list) || !is_array($rows_party_list)) {
+    $rows_party_list = [];
+}
+
+if (!isset($rows_candidate) || !is_array($rows_candidate)) {
+    $rows_candidate = [];
+}
+
+if (!isset($rows_positions) || !is_array($rows_positions)) {
+    $rows_positions = [];
+}
+
+if (!isset($rows_voters) || !is_array($rows_voters)) {
+    $rows_voters = [];
+}
+
+
+?>
+
 
 <?php if (isset($_POST["AddParty"])) {
     $partyName = $_POST["PartyName"];
@@ -10,7 +30,7 @@
         if ($stmt->execute()) {
             $stmt = $conn->prepare("SELECT * FROM party_list");
             $stmt->execute();
-            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $rows_party_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $_POST['btn1'] = true;
         } else {
             echo "Error adding party.";
@@ -23,7 +43,7 @@
 <?php
 function button1Action()
 {
-    global $rows;
+    global $rows_party_list;
     ?>
     <div class="RightHeader">
         <h4>Add party</h4>
@@ -42,14 +62,14 @@ function button1Action()
                 <th>Party Name</th>
                 <th name="action">Action</th>
             </tr>
-            <?php if (count($rows) > 0) {
-                foreach ($rows as $row) { ?>
+            <?php if (count($rows_party_list) > 0) {
+                foreach ($rows_party_list as $row) { ?>
                     <tr>
                         <td name="PartyID">
-                            <p><?php echo $row["Party ID"] ?></p>
+                            <p><?php echo $row["id"] ?></p>
                         </td>
                         <td name="PartyName">
-                            <p><?php echo $row["Party Name"] ?></p>
+                            <p><?php echo $row["party_name"] ?></p>
                         </td>
                         <td name="action">
                             <form action="" method="post">

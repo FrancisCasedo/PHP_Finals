@@ -32,3 +32,4 @@ $count_voters = $stmt_voters->rowCount();
 $rows_voters = $stmt_voters->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
+

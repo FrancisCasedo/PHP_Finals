@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 12, 2025 at 08:38 PM
+-- Generation Time: Jul 12, 2025 at 08:57 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -64,10 +64,12 @@ CREATE TABLE `positions` (
 
 CREATE TABLE `voters` (
   `id` int(11) NOT NULL,
+  `student_number` int(9) NOT NULL,
   `first_name` varchar(100) NOT NULL,
   `middle_initial` varchar(2) NOT NULL,
   `last_name` varchar(100) NOT NULL,
-  `Course` varchar(100) NOT NULL
+  `Course` varchar(100) NOT NULL,
+  `VoterPassword` int(25) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
