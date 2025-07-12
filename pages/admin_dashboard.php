@@ -1,21 +1,6 @@
-<?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "election_database";
 
-try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
-}
+<?php require_once "../config.php" ?>
 
-$stmt = $conn->prepare("SELECT * FROM party_list");
-$stmt->execute();
-$count = $stmt->rowCount();
-$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
 
 <?php if (isset($_POST["AddParty"])) {
     $partyName = $_POST["PartyName"];
