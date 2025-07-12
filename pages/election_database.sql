@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 29, 2025 at 03:06 PM
+-- Generation Time: Jul 12, 2025 at 08:38 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -28,32 +28,32 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `candidate` (
-  `ID` int(11) NOT NULL,
-  `Candidate Name` text NOT NULL,
-  `Position` text NOT NULL,
-  `Party` text NOT NULL
+  `id` int(11) NOT NULL,
+  `candidate_name` varchar(100) NOT NULL,
+  `partylist_id` int(11) NOT NULL,
+  `position_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `party_list`
+-- Table structure for table `partylist`
 --
 
-CREATE TABLE `party_list` (
-  `Party ID` int(11) NOT NULL,
-  `Party Name` varchar(20) NOT NULL
+CREATE TABLE `partylist` (
+  `id` int(11) NOT NULL,
+  `party_name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `position`
+-- Table structure for table `positions`
 --
 
-CREATE TABLE `position` (
-  `Position ID` int(11) NOT NULL,
-  `Position Name` varchar(20) NOT NULL
+CREATE TABLE `positions` (
+  `id` int(11) NOT NULL,
+  `position_name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -63,10 +63,81 @@ CREATE TABLE `position` (
 --
 
 CREATE TABLE `voters` (
-  `ID` int(11) NOT NULL,
-  `Student ID` varchar(9) NOT NULL,
-  `isVoted` char(1) NOT NULL
+  `id` int(11) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `middle_initial` varchar(2) NOT NULL,
+  `last_name` varchar(100) NOT NULL,
+  `Course` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `candidate`
+--
+ALTER TABLE `candidate`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `partylist_id` (`partylist_id`),
+  ADD KEY `position_id` (`position_id`);
+
+--
+-- Indexes for table `partylist`
+--
+ALTER TABLE `partylist`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `positions`
+--
+ALTER TABLE `positions`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `voters`
+--
+ALTER TABLE `voters`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `candidate`
+--
+ALTER TABLE `candidate`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `partylist`
+--
+ALTER TABLE `partylist`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `positions`
+--
+ALTER TABLE `positions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `voters`
+--
+ALTER TABLE `voters`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `candidate`
+--
+ALTER TABLE `candidate`
+  ADD CONSTRAINT `candidate_ibfk_1` FOREIGN KEY (`partylist_id`) REFERENCES `partylist` (`id`),
+  ADD CONSTRAINT `candidate_ibfk_2` FOREIGN KEY (`position_id`) REFERENCES `positions` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

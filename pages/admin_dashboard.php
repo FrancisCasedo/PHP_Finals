@@ -46,10 +46,10 @@ function button1Action()
                 foreach ($rows as $row) { ?>
                     <tr>
                         <td name="PartyID">
-                            <p><?php echo $row["party_id"] ?></p>
+                            <p><?php echo $row["Party ID"] ?></p>
                         </td>
                         <td name="PartyName">
-                            <p><?php echo $row["party_name"] ?></p>
+                            <p><?php echo $row["Party Name"] ?></p>
                         </td>
                         <td name="action">
                             <form action="" method="post">

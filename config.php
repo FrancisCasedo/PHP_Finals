@@ -11,7 +11,7 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
-$stmt_party_list = $conn->prepare("SELECT * FROM party_list");
+$stmt_party_list = $conn->prepare("SELECT * FROM partylist");
 $stmt_party_list->execute();
 $count_party_list = $stmt_party_list->rowCount();
 $rows_party_list = $stmt_party_list->fetchAll(PDO::FETCH_ASSOC);
