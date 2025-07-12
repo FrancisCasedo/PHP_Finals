@@ -36,7 +36,7 @@ $rows_voters = $stmt_voters->fetchAll(PDO::FETCH_ASSOC);
 
 <?php
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_voter'])) {
     $student_no = $_POST['student_no'];
     $fname = $_POST['fname'];
     $mi = $_POST['mi'];
@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
     ]);
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_voter'])) {
     $id = $_POST['id'];
     $student_no = $_POST['student_no'];
     $fname = $_POST['fname'];
@@ -80,8 +80,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
     exit();
 }
 
-if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
+if (isset($_GET['delete_voter'])) {
+    $id = $_GET['delete_voter'];
     $sql = "DELETE FROM voters WHERE ID=:id";
     $stmt_d_voter = $conn->prepare($sql);
     $stmt_d_voter->execute([':id' => $id]);
@@ -89,18 +89,18 @@ if (isset($_GET['delete'])) {
     exit();
 }
 
-$edit_mode = false;
-$edit_data = ['ID'=>'','student_no'=>'', 'fname'=>'', 'mi'=>'', 'lastname'=>'', 'course'=>'', 'VoterPassword'=>''];
+$edit_mode_voter = false;
+$edit_voter = ['ID'=>'','student_no'=>'', 'fname'=>'', 'mi'=>'', 'lastname'=>'', 'course'=>'', 'VoterPassword'=>''];
 
 if (isset($_GET['edit'])) {
-    $edit_mode = true;
+    $edit_mode_voter = true;
     $id = $_GET['edit'];
     $sql = "SELECT * FROM voters WHERE ID=:id";
     $stmt_e_voter = $conn->prepare($sql);
     $stmt_e_voter->execute([':id' => $id]);
     $result_edit = $stmt_e_voter->fetch(PDO::FETCH_ASSOC);
     if ($result_edit) {
-        $edit_data = $result_edit;
+        $edit_voter = $result_edit;
     }
 }
 
@@ -119,35 +119,34 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <div class="form-container">
-        <h1><?php echo $edit_mode ? "Edit voter" : "Add Voter"; ?></h1>
+        <h1><?php echo $edit_mode_voter ? "Edit voter" : "Add Voter"; ?></h1>
         <hr class="divider">
         <form method="Post" action="">
-            <input type="hidden" name="id" value="<?php echo $edit_data['id']; ?>">
+            <input type="hidden" name="id" value="<?php echo $edit_voter['id']; ?>">
             <label>Student Number:</label><br>
-            <input type="text" name="student_no" value="<?php echo $edit_data['student_no']; ?>" required><br>
+            <input type="text" name="student_no" value="<?php echo $edit_voter['student_no']; ?>" required><br>
 
             <label>First Name:</label><br>
-            <input type="text" name="fname" value="<?php echo $edit_data['fname']; ?>" required><br>
+            <input type="text" name="fname" value="<?php echo $edit_voter['fname']; ?>" required><br>
             <label>Middle Initial:</label><br>
-            <input type="text" name="mi" maxlength="1" value="<?php echo $edit_data['mi']; ?>" required><br>
+            <input type="text" name="mi" maxlength="1" value="<?php echo $edit_voter['mi']; ?>" required><br>
             <label>Last Name:</label><br>
-            <input type="text" name="lastname" value="<?php echo $edit_data['lastname']; ?>" required><br>
+            <input type="text" name="lastname" value="<?php echo $edit_voter['lastname']; ?>" required><br>
             <label>Course:</label><br>
-            <input type="text" name="course" value="<?php echo $edit_data['course']; ?>" required><br>
+            <input type="text" name="course" value="<?php echo $edit_voter['course']; ?>" required><br>
             <label>Password:</label><br>
-            <input type="text" name="voter_password" value="<?php echo $edit_data['VoterPassword']; ?>" required><br>
+            <input type="text" name="voter_password" value="<?php echo $edit_voter['VoterPassword']; ?>" required><br>
 
-            <?php if ($edit_mode): ?>
-            <input type="submit" name="update" value="update">
+            <?php if ($edit_mode_voter): ?>
+            <input type="submit" name="update_voter" value="update_voter">
             <a href="voter.php">Cancel</a>
             <?php else: ?>
-                <input type="submit" name="add" value="Add">
+                <input type="submit" name="add_voter" value="Add_voter">
             <?php endif; ?>
         </form>
     </div>
 
     <div class="table-container">
-        <h2>+++++OUTPUT+++++</h2>
         <table>
             <tr>
                 <th>Number</th>
@@ -172,7 +171,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td>{$row['VoterPassword']}</td>
                         <td>
                             <a href='?edit={$row['id']}'>Edit</a> |
-                            <a href='?delete={$row['id']}' onclick=\"return confirm('Are you sure?')\">Delete</a>
+                            <a href='?delete_voter={$row['id']}' onclick=\"return confirm('Are you sure?')\">Delete</a>
                         </td>
                     </tr>";
                 $i++;
