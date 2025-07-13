@@ -1,16 +1,16 @@
 <?php
-$Input = "";
-$Input2 = "";
+$UserInput = "";
+$PasswordInput = "";
 ?>
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $Input = $_POST['Username'] ?? '';
-    $Input2 = $_POST['Password'] ?? '';
-    if ($Input === "admin" && $Input2 === "admin123") {
+    $UserInput = $_POST['Username'] ?? '';
+    $PasswordInput = $_POST['Password'] ?? '';
+    if ($Input === "admin" && $PasswordInput === "admin123") {
         header("Location: admin_dashboard.php");
         exit();
-    } elseif ($Input === "user" && $Input2 === "user123") { // should be connected to the database for real user validation
+    } elseif ($UserInput === "user" && $PasswordInput === "user123") { // should be connected to the database for real user validation
         session_start();
         header("Location: user_dashboard.php");
         exit();
@@ -38,9 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h2>Election --------</h2>
             <form action="">
                 <label for="Username">Username</label><br>
-                <input type="text" name="Username" value="<?php echo $Input; ?>" class="InputBox"><br>
+                <input type="text" name="Username" value="<?php echo $UserInput; ?>" class="InputBox"><br>
                 <label for="Password">Password</label><br>
-                <input type="password" name="Password" value=$Input2 class="InputBox"><br>
+                <input type="password" name="Password" value=$PasswordInput class="InputBox"><br>
                 <button type="submit">login</button>
             </form>
         </div>
