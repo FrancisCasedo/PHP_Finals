@@ -1,24 +1,46 @@
+<?php require_once "./config.php";
+
+session_start() ?>
+
 <?php
-$Input = "";
-$Input2 = "";
+$UserInput = "";
+$PasswordInput = "";
+$message = "";
 ?>
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $Input = $_POST['Username'] ?? '';
-    $Input2 = $_POST['Password'] ?? '';
-    if ($Input === "admin" && $Input2 === "admin123") {
-        header("Location: admin_dashboard.php");
+    $UserInput = $_POST['Username'] ?? '';
+    $PasswordInput = $_POST['Password'] ?? '';
+    if ($UserInput === "admin" && $PasswordInput === "admin123") {
+        header("Location: ./pages/admin_dashboard.php");
         exit();
-    } elseif ($Input === "user" && $Input2 === "user123") { // should be connected to the database for real user validation
-        session_start();
-        header("Location: user_dashboard.php");
-        exit();
-
+    } elseif (!empty($UserInput) && !empty($PasswordInput)) {
+        try {
+            $query = "SELECT student_number, VoterPassword FROM voters WHERE student_number = ?";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(1, $UserInput);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            var_dump($row);
+            var_dump($UserInput, $PasswordInput);
+            if ($row) {
+                if ($PasswordInput === $row['VoterPassword'] || $UserInput === "$row[student_number]") {
+                    header("Location: ./pages/admin_dashboard.php");
+                    exit();
+                } else {
+                    $message = "Your Password Was Incorrect";
+                }
+                $message = "User Not Found";
+            } else {
+                echo $message;
+            }
+        } catch (PDOException $e) {
+            $message = "Database Error: " . $e->getMessage();
+        }
     } else {
-        echo "<script>alert('Invalid Username or Password');</script>";
+        $message = "Your ID Was Not Found";
     }
-
 }
 ?>
 
@@ -36,11 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div>
         <div>
             <h2>Election --------</h2>
-            <form action="">
+            <form action="" method="POST">
                 <label for="Username">Username</label><br>
-                <input type="text" name="Username" value="<?php echo $Input; ?>" class="InputBox"><br>
+                <input type="text" name="Username" value="<?php echo $UserInput; ?>" class="InputBox"><br>
                 <label for="Password">Password</label><br>
-                <input type="password" name="Password" value=$Input2 class="InputBox"><br>
+                <input type="password" name="Password" value="<?php echo $PasswordInput; ?>" class="InputBox"><br>
                 <button type="submit">login</button>
             </form>
         </div>

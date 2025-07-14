@@ -88,6 +88,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_voter'])) {
     exit();
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_voter'])) {
+    $id = $_POST['id'];
+    $student_no = $_POST['student_no'];
+    $fname = $_POST['fname'];
+    $mi = $_POST['mi'];
+    $lastname = $_POST['lastname'];
+    $course = $_POST['course'];
+    $VoterPassword = $_POST['voter_password']; // <-- Add this line
+
+    $sql = "UPDATE voters SET student_no=:student_no, fname=:fname, mi=:mi, lastname=:lastname, course=:course, VoterPassword=:VoterPassword WHERE ID=:id";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([
+        ':student_no' => $student_no,
+        ':fname' => $fname,
+        ':mi' => $mi,
+        ':lastname' => $lastname,
+        ':course' => $course,
+        ':id' => $id,
+        ':VoterPassword' => $VoterPassword
+    ]);
+    $_POST['btn4'] = true;
+    exit();
+}
+
 if (isset($_GET['delete_voter'])) {
     $id = $_GET['delete_voter'];
     $sql = "DELETE FROM voters WHERE ID=:id";
@@ -113,7 +137,7 @@ if (isset($_GET['edit'])) {
 
 $stmt_voters = $conn->prepare("SELECT * FROM voters ORDER BY ID ASC");
 $stmt_voters->execute();
-$result_voters = $stmt_voters->fetchAll(PDO::FETCH_ASSOC);
+$rows_voters = $stmt_voters->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!----------------------- VOTER MANAGEMENT ------------------------->
@@ -205,7 +229,7 @@ function button3Action()
 <?php
 function button4Action()
 {
-    global $edit_mode_voter, $edit_voter, $result_voters;
+    global $edit_mode_voter, $edit_voter, $rows_voters ;
     ?>
     <h1><?php echo $edit_mode_voter ? "Edit voter" : "Add Voter"; ?></h1>
         <hr class="divider">
@@ -247,9 +271,9 @@ function button4Action()
             </tr>
             <?php
             $i = 1;
-            if (count($result_voters) > 0) {
+            if (count($rows_voters) > 0) {
                 $i = 1;
-            foreach ($result_voters as $row) {
+            foreach ($rows_voters  as $row) {
                 echo "<tr>
                         <td>{$row['id']}</td>
                         <td>{$row['student_number']}</td>
