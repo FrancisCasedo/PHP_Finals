@@ -40,6 +40,66 @@ if (!isset($rows_voters) || !is_array($rows_voters)) {
 
 <!----------------------- PARTY MANAGEMENT ------------------------->
 
+<!----------------------- POSITIONS MANAGEMENT ------------------------->
+<?php
+// --- Add this block near your other position management code ---
+
+// Add Position
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_position'])) {
+    $position_name = $_POST['position_name'];
+    $sql = "INSERT INTO positions (position_name) VALUES (:position_name)";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([':position_name' => $position_name]);
+    $_POST['btn2'] = true;
+}
+
+// Edit Position
+$edit_mode_position = false;
+$edit_position = ['id' => '', 'position_name' => ''];
+
+if (isset($_GET['edit_position'])) {
+    $edit_mode_position = true;
+    $id = $_GET['edit_position'];
+    $sql = "SELECT * FROM positions WHERE id=:id";
+    $stmt_e_position = $conn->prepare($sql);
+    $stmt_e_position->execute([':id' => $id]);
+    $result_edit = $stmt_e_position->fetch(PDO::FETCH_ASSOC);
+    if ($result_edit) {
+        $edit_position = $result_edit;
+    }
+}
+
+// Update Position
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_position'])) {
+    $id = $_POST['id'];
+    $position_name = $_POST['position_name'];
+    $sql = "UPDATE positions SET position_name=:position_name WHERE id=:id";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([
+        ':position_name' => $position_name,
+        ':id' => $id
+    ]);
+    $_POST['btn2'] = true;
+    exit();
+}
+
+// Delete Position
+if (isset($_GET['delete_position'])) {
+    $id = $_GET['delete_position'];
+    $sql = "DELETE FROM positions WHERE id=:id";
+    $stmt_d_position = $conn->prepare($sql);
+    $stmt_d_position->execute([':id' => $id]);
+    $_POST['btn2'] = true;
+}
+
+// Refresh positions list
+$stmt_positions = $conn->prepare("SELECT * FROM positions ORDER BY id ASC");
+$stmt_positions->execute();
+$rows_positions = $stmt_positions->fetchAll(PDO::FETCH_ASSOC);
+?>
+<!----------------------- POSITIONS MANAGEMENT ------------------------->
+
+
 <!----------------------- VOTER MANAGEMENT ------------------------->
 
 <?php
@@ -198,20 +258,44 @@ function button1Action()
 
 <?php
 function button2Action()
-{ ?>
-    <form action="">
-        <h1>Hello</h1>
-        <h1>Form 1</h1>
-        <input type="text">
-        <button type="submit">Add</button>
+{
+    global $conn, $rows_positions;
+    ?>
+    <h1>Add Position</h1>
+    <hr class="divider">
+    <form method="post" action="">
+        <label>Position Name:</label><br>
+        <input type="text" name="position_name" required><br>
+        <input type="submit" name="add_position" value="Add Position">
     </form>
-    <form action="">
-        <h1>Form 2</h1>
-        <input type="text">
-        <button type="submit">Add</button>
-        <h1>pooks</h1>
-    </form>
-<?php }
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Position Name</th>
+                <th>Action</th>
+            </tr>
+            <?php
+            if (count($rows_positions) > 0) {
+                foreach ($rows_positions as $row) {
+                    echo "<tr>
+                            <td>{$row['id']}</td>
+                            <td>{$row['position_name']}</td>
+                            <td>
+                                <a href='?edit_position={$row['id']}'>Edit</a> |
+                                <a href='?delete_position={$row['id']}' onclick=\"return confirm('Are you sure?')\">Delete</a>
+                            </td>
+                        </tr>";
+                }
+            } else {
+                echo "<tr><td colspan='3'>No positions added yet.</td></tr>";
+            }
+            ?>
+        </table>
+    </div>
+    <?php
+} ?>
+<?php
 function button3Action()
 { ?>
     <form action="">
@@ -225,6 +309,7 @@ function button3Action()
         <button type="submit">Add</button>
     </form>
 <?php } ?>
+
 
 <?php
 function button4Action()
