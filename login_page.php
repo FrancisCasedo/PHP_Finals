@@ -24,11 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(1, $UserInput);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            var_dump($row);
             var_dump($UserInput, $PasswordInput);
             if ($row) {
-                if ($PasswordInput === $row['VoterPassword'] && $UserInput === "$row[student_number]") {
-                    $_SESSION['student_number'] = $UserInput;
+                if ($PasswordInput === $row['VoterPassword'] || $UserInput === "$row[student_number]") {
+                    var_dump($row);
                     header("Location: ./pages/admin_dashboard.php");
                     exit();
                 } else {
