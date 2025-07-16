@@ -13,7 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $UserInput = $_POST['Username'] ?? '';
     $PasswordInput = $_POST['Password'] ?? '';
     if ($UserInput === "admin" && $PasswordInput === "admin123") {
+        $_SESSION['student_number'] = $UserInput;
         header("Location: ./pages/admin_dashboard.php");
+
         exit();
     } elseif (!empty($UserInput) && !empty($PasswordInput)) {
         try {
@@ -25,7 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             var_dump($row);
             var_dump($UserInput, $PasswordInput);
             if ($row) {
-                if ($PasswordInput === $row['VoterPassword'] || $UserInput === "$row[student_number]") {
+                if ($PasswordInput === $row['VoterPassword'] && $UserInput === "$row[student_number]") {
+                    $_SESSION['student_number'] = $UserInput;
                     header("Location: ./pages/admin_dashboard.php");
                     exit();
                 } else {
