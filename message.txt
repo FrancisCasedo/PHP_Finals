@@ -177,7 +177,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_voter'])) {
     $lastname = $_POST['lastname'];
     $course = $_POST['course'];
     $password = $_POST['voter_password'];
-    
+
     $sql = "INSERT INTO voters (student_number, first_name, middle_initial, last_name, Course,VoterPassword)
             VALUES (:student_no, :fname, :mi, :lastname, :course, :VoterPassword)";
     $stmt = $conn->prepare($sql);
@@ -194,8 +194,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_voter'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_voter'])) {
     $id = $_POST['id'];
-    echo "<br>";
-    var_dump($id);
     $student_no = $_POST['student_no'];
     $fname = $_POST['fname'];
     $mi = $_POST['mi'];
@@ -217,6 +215,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_voter'])) {
     header("Location: admin_dashboard.php?section=voters");
     exit();
 }
+if (isset($_GET['edit'])) {
+    $edit_mode_voter = true;
+    $id = $_GET['edit'];
+    $sql = "SELECT * FROM voters WHERE id=:id";
+    $stmt_e_voter = $conn->prepare($sql);
+    $stmt_e_voter->execute([':id' => $id]);
+    $result_edit = $stmt_e_voter->fetch(PDO::FETCH_ASSOC);
+    if ($result_edit) {
+        $edit_voter = $result_edit;
+    }
+}
+
+$edit_mode_voter = false;
+$edit_voter = ['ID' => '', 'student_no' => '', 'fname' => '', 'mi' => '', 'lastname' => '', 'course' => '', 'VoterPassword' => ''];
+
 
 if (isset($_GET['delete_voter'])) {
     $id = $_GET['delete_voter'];
@@ -227,28 +240,12 @@ if (isset($_GET['delete_voter'])) {
 }
 
 
-$edit_mode_voter = false;
-$edit_voter = ['ID' => '', 'student_no' => '', 'fname' => '', 'mi' => '', 'lastname' => '', 'course' => '', 'VoterPassword' => ''];
-
-if (isset($_GET['edit_voter'])) {
-    $edit_mode_voter = true;
-    $id = $_GET['edit_voter'];
-    echo "$id";
-    $sql = "SELECT * FROM voters WHERE ID=:id";
-    $stmt_e_voter = $conn->prepare($sql);
-    $stmt_e_voter->execute([':id' => $id]);
-    var_dump((bool) $stmt_e_voter);
-    $result_edit = $stmt_e_voter->fetch(PDO::FETCH_ASSOC);
-    var_dump($result_edit);
-    if ($result_edit) {
-        $edit_voter = $result_edit;
-    }
-}
 
 $stmt_voters = $conn->prepare("SELECT * FROM voters ORDER BY ID ASC");
 $stmt_voters->execute();
-$result_voters = $stmt_voters->fetchAll(PDO::FETCH_ASSOC);
+$rows_voters = $stmt_voters->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!----------------------- VOTER MANAGEMENT ------------------------->
 
 
@@ -431,7 +428,7 @@ function AddCandidate()
     </h1>
     <hr class="divider">
     <form method="POST" action="">
-        <input type="hidden" name="id" value="<?php echo isset($edit_voter['id']) ? $edit_voter['id'] : ''; ?>">
+        <input type="hidden" name="id" value="<?php echo isset($edit_voter['ID']) ? $edit_voter['ID'] : ''; ?>">
         
         <label>Student Number:</label><br>
         <input type="text" name="student_no" value="<?php echo isset($edit_voter['student_no']) ? $edit_voter['student_no'] : '' ?>"><br>
@@ -479,7 +476,7 @@ function AddCandidate()
                             <td>{$row['Course']}</td>
                             <td>{$row['VoterPassword']}</td>
                             <td>
-                                <a href='?edit_voter={$row['id']}'>Edit</a> |
+                                <a href='?edit={$row['id']}'>Edit</a> |
             <a href='?delete_voter={$row['id']}' onclick=\"return confirm('Are you sure?')\">Delete</a>
                             </td>
                         </tr>";
@@ -539,11 +536,8 @@ function AddCandidate()
                 if (isset($_GET['edit_candidate'])) {
                     $section = 'candidate';
                 }
-                if (isset($_GET['edit_voter'])) {
+                if (isset($_GET['edit'])) {
                     $section = 'voters';
-                }
-                if (isset($_GET['edit_position'])) {
-                    $section = 'position';
                 }
 
                 if ($section === 'party' || isset($_GET['btn1'])) {
