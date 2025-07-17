@@ -6,11 +6,26 @@ session_start();
 //     exit();
 // }
 
+function getPositions($conn) {
+    $sql = "SELECT * FROM positions";
+    $stmt = $conn->query($sql);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getCandidatesByPosition($conn, $position_id) {
+    $sql = "SELECT candidate.* FROM candidate
+            JOIN positions ON candidate.position_id = positions.id
+            WHERE candidate.position_id = :position_id";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute(['position_id' => $position_id]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         foreach ($_POST['vote'] as $position_id => $candidate_id) {
             $sql_update_candidate_votes = "UPDATE candidate SET number_of_votes = number_of_votes + 1 WHERE id = :candidate_id";
-            $stmt_update_candidate_votes = $conn->prepare($sql_update);
+            $stmt_update_candidate_votes = $conn->prepare($sql_update_candidate_votes);
             $stmt_update_candidate_votes->execute(['candidate_id' => $candidate_id]);
         }
         $sql_update_voter_status = "UPDATE voters SET has_voted = 1 WHERE student_number = :student_number";
@@ -36,40 +51,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <form method="POST">
         <?php
-        $sql = "SELECT * FROM positions";
-        $stmt = $conn->query($sql);
-        $positions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        if (count($positions) > 0) {
-            foreach ($positions as $position) {
-                echo "<table>";
-                echo "<tr><th>" . htmlspecialchars($position['position_name']) . "</th></tr>";
-                try {
-                    $sql_2 = "SELECT candidate.* FROM candidate
-                             JOIN positions ON candidate.position_id = positions.id
-                             WHERE candidate.position_id = :position_id";
-                    $stmt_2 = $conn->prepare($sql_2);
-                    $stmt_2->execute(['position_id' => $position['id']]);
-                    $candidates = $stmt_2->fetchAll(PDO::FETCH_ASSOC);
-                    if (count($candidates) > 0) {
-                        foreach ($candidates as $candidate) {
-                            echo "<tr><td>";
-                            echo "<input type='radio' name='vote[".htmlspecialchars($position['id'])."]'value='".htmlspecialchars($candidate['id'])."' required>";
-                            echo htmlspecialchars($candidate['candidate_name']);
-                            echo "</td></tr>";
-                        }
-                    } else {
-                        echo "<tr><td>No candidates for this position</td></tr>";
-                    }
-                } catch (PDOException $e) {
-                    echo "<tr><td>Error loading candidates</td></tr>";
-                }
-                echo "</table>";
+        //This block of code is for displaying the voting options
+        $positions = getPositions($conn);
+        foreach ($positions as $position){
+            echo "<table>";
+            echo "<tr><th>" . htmlspecialchars($position['position_name']) . "</th></tr>";
+            $candidates = getCandidatesByPosition($conn, $position['id']);
+            foreach ($candidates as $candidate) {
+                echo "<tr><td>";
+                echo "<input type='radio' name='vote[" . htmlspecialchars($position['id']) . "]' value='" . htmlspecialchars($candidate['id']) . "' required>";
+                echo htmlspecialchars($candidate['candidate_name']);
+                echo "</td></tr>";
             }
-            echo "<button type='submit' class='submit_btn'>Submit Votes</button>";
-        } else {
-            echo "<p>No positions available</p>";
+            echo "</table>";
         }
+        echo '<button type="submit">Submit Votes</button>';
         ?>
     </form>
 </body>
