@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($row) {
                 if ($PasswordInput === $row['VoterPassword'] || $UserInput === "$row[student_number]") {
                     var_dump($row);
-                    header("Location: ./pages/admin_dashboard.php");
+                    header("Location: ./pages/user_dashboard.php");
                     exit();
                 } else {
                     $message = "Your Password Was Incorrect";

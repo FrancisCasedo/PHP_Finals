@@ -21,6 +21,12 @@ function getCandidatesByPosition($conn, $position_id) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function getPartyList($conn) {
+    $sql = "SELECT * FROM partylist";
+    $stmt = $conn->query($sql);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         foreach ($_POST['vote'] as $position_id => $candidate_id) {
@@ -65,8 +71,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             echo "</table>";
         }
+
+        $party_list = getPartyList($conn);
+
+        echo "<table>";
+        echo "<tr><th>" . "Party Lists" . "</th></tr>";
+        foreach($party_list as $party) {
+            echo "<tr><td>";
+            echo "<input type='radio' name='vote[party]' value='" . htmlspecialchars($party['id']) . "' required>";
+            echo htmlspecialchars($party['party_name']);
+            echo "</td></tr>";
+        }
+        echo "</table>";
+
         echo '<button type="submit">Submit Votes</button>';
         ?>
     </form>
+
+
+    
+
 </body>
 </html>
