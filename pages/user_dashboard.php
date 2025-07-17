@@ -1,10 +1,10 @@
 <?php
 require_once "../config.php";
 session_start();
-// if (!isset($_SESSION['student_number']) || (isset($_SESSION['has_voted']) && $_SESSION['has_voted'] == 1)) {
-//     header("Location: ../login_page.php");
-//     exit();
-// }
+if (!isset($_SESSION['student_number']) || (isset($_SESSION['is_voted']) && $_SESSION['is_voted'] == 1)) {
+    header("Location: ../login_page.php");
+    exit();
+}
 
 function getPositions($conn) {
     $sql = "SELECT * FROM positions";
@@ -34,10 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt_update_candidate_votes = $conn->prepare($sql_update_candidate_votes);
             $stmt_update_candidate_votes->execute(['candidate_id' => $candidate_id]);
         }
-        $sql_update_voter_status = "UPDATE voters SET has_voted = 1 WHERE student_number = :student_number";
+        $sql_update_voter_status = "UPDATE voters SET is_voted = 1 WHERE student_number = :student_number";
         $stmt_update_voter_status = $conn->prepare($sql_update_voter_status);
         $stmt_update_voter_status->execute(['student_number' => $_SESSION['student_number']]);
-        $_SESSION['has_voted'] = 1;
+        $_SESSION['is_voted'] = 1;
         echo "Votes submitted successfully!";
         exit();
     } catch (PDOException $e) {
@@ -87,9 +87,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo '<button type="submit">Submit Votes</button>';
         ?>
     </form>
-
-
-    
 
 </body>
 </html>
