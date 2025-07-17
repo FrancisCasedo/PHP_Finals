@@ -1,19 +1,22 @@
 <?php
 require_once "../config.php";
 session_start();
-// if ( isset( $_SESSION['student_number'] ) ) {
+// if (!isset($_SESSION['student_number']) || (isset($_SESSION['has_voted']) && $_SESSION['has_voted'] == 1)) {
 //     header("Location: ../login_page.php");
 //     exit();
 // }
 
-// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         foreach ($_POST['vote'] as $position_id => $candidate_id) {
-            $sql_update = "UPDATE candidate SET number_of_votes = number_of_votes + 1 WHERE id = :candidate_id";
-            $stmt_update = $conn->prepare($sql_update);
-            $stmt_update->execute(['candidate_id' => $candidate_id]);
+            $sql_update_candidate_votes = "UPDATE candidate SET number_of_votes = number_of_votes + 1 WHERE id = :candidate_id";
+            $stmt_update_candidate_votes = $conn->prepare($sql_update);
+            $stmt_update_candidate_votes->execute(['candidate_id' => $candidate_id]);
         }
+        $sql_update_voter_status = "UPDATE voters SET has_voted = 1 WHERE student_number = :student_number";
+        $stmt_update_voter_status = $conn->prepare($sql_update_voter_status);
+        $stmt_update_voter_status->execute(['student_number' => $_SESSION['student_number']]);
+        $_SESSION['has_voted'] = 1;
         echo "Votes submitted successfully!";
         exit();
     } catch (PDOException $e) {
