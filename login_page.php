@@ -1,74 +1,72 @@
-<?php require_once "./config.php";
-
-session_start() ?>
-
 <?php
+require_once "./config.php";
+session_start();
+
 $UserInput = "";
 $PasswordInput = "";
 $message = "";
-?>
 
-<?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $UserInput = $_POST['Username'] ?? '';
     $PasswordInput = $_POST['Password'] ?? '';
-    if ($UserInput === "admin" && $PasswordInput === "admin123") {
-        $_SESSION['student_number'] = $UserInput;
-        header("Location: ./pages/admin_dashboard.php");
 
+    if (empty($UserInput) || empty($PasswordInput)) {
+        $message = "Please enter both username and password";
+    } elseif ($UserInput === "admin" && $PasswordInput === "admin123") {
+        $_SESSION['student_number'] = $UserInput;
+        $_SESSION['is_admin'] = true;
+        header("Location: ./pages/admin_dashboard.php");
         exit();
-    } elseif (!empty($UserInput) && !empty($PasswordInput)) {
+    } else {
         try {
-            $query = "SELECT student_number, VoterPassword FROM voters WHERE student_number = ?";
+            $query = "SELECT student_number, VoterPassword, is_voted FROM voters WHERE student_number = :student_number";
             $stmt = $conn->prepare($query);
-            $stmt->bindParam(1, $UserInput);
-            $stmt->execute();
+            $stmt->execute(['student_number' => $UserInput]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            var_dump($UserInput, $PasswordInput);
+
             if ($row) {
-                if ($PasswordInput === $row['VoterPassword'] || $UserInput === "$row[student_number]") {
-                    var_dump($row);
+                if ($row['is_voted'] == 1) {
+                    $message = "You have already voted";
+                }
+                elseif ($PasswordInput === $row['VoterPassword']) {
+                    $_SESSION['student_number'] = $row['student_number'];
+                    $_SESSION['is_voted'] = $row['is_voted'] ? 1 : 0;
                     header("Location: ./pages/user_dashboard.php");
                     exit();
                 } else {
-                    $message = "Your Password Was Incorrect";
+                    $message = "Incorrect password";
                 }
-                $message = "User Not Found";
             } else {
-                echo $message;
+                $message = "User not found";
             }
         } catch (PDOException $e) {
-            $message = "Database Error: " . $e->getMessage();
+            error_log("Login database error: " . $e->getMessage());
+            $message = "Database error: " . htmlspecialchars($e->getMessage());
         }
-    } else {
-        $message = "Your ID Was Not Found";
     }
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Election Login</title>
 </head>
-
 <body>
     <div>
-        <div>
-            <h2>Election --------</h2>
-            <form action="" method="POST">
-                <label for="Username">Username</label><br>
-                <input type="text" name="Username" value="<?php echo $UserInput; ?>" class="InputBox"><br>
-                <label for="Password">Password</label><br>
-                <input type="password" name="Password" value="<?php echo $PasswordInput; ?>" class="InputBox"><br>
-                <button type="submit">login</button>
-            </form>
-        </div>
+        <h2>Election Login</h2>
+        <?php if (!empty($message)): ?>
+            <p class="error"><?php echo htmlspecialchars($message); ?></p>
+        <?php endif; ?>
+        <form action="" method="POST">
+            <label for="Username">Username</label><br>
+            <input type="text" name="Username" value="<?php echo htmlspecialchars($UserInput); ?>" class="InputBox"><br>
+            <label for="Password">Password</label><br>
+            <input type="password" name="Password" value="" class="InputBox"><br>
+            <button type="submit">login</button>
+        </form>
     </div>
 </body>
-
 </html>
