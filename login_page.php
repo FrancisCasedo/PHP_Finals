@@ -1,5 +1,5 @@
 <?php
-require_once "./config.php";
+require_once './config.php';
 session_start();
 
 $UserInput = "";
@@ -52,10 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/login_page_style.css">
     <title>Election Login</title>
 </head>
 <body>
-    <div>
+    <div class="Divider">
         <h2>Election Login</h2>
         <?php if (!empty($message)): ?>
             <p class="error"><?php echo htmlspecialchars($message); ?></p>
