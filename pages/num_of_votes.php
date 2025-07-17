@@ -62,7 +62,7 @@ function getMostVotesParty($conn) {
     $positions = getPositions($conn);
     if (count($positions) > 0) {
         foreach ($positions as $position) {
-            echo "<h3>Candidate(s) with Most Votes for " . htmlspecialchars($position['position_name']) . ":</h3>";
+            echo "<h3>Candidate with Most Votes for " . htmlspecialchars($position['position_name']) . ":</h3>";
             $most_votes = getMostVotesCandidate($conn, $position['id']);
             foreach ($most_votes as $candidate) {
                 echo htmlspecialchars($candidate['candidate_name']) . " (" . 
