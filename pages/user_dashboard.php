@@ -19,6 +19,7 @@ function getCandidatesByPosition($conn, $position_id) {
     $stmt->execute(['position_id' => $position_id]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 function getPartyList($conn) {
     try {
         $sql = "SELECT * FROM partylist";
@@ -30,6 +31,7 @@ function getPartyList($conn) {
         return [];
     }
 }
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $sql_check = "SELECT is_voted FROM voters WHERE student_number = :student_number";
@@ -131,7 +133,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo "<p>No party lists available</p>";
         }
-
         echo '<button type="submit">Submit Votes</button>';
         ?>
     </form>
