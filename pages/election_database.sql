@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 12, 2025 at 08:57 PM
+-- Generation Time: Jul 17, 2025 at 04:10 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -31,8 +31,18 @@ CREATE TABLE `candidate` (
   `id` int(11) NOT NULL,
   `candidate_name` varchar(100) NOT NULL,
   `partylist_id` int(11) NOT NULL,
-  `position_id` int(11) NOT NULL
+  `position_id` int(11) NOT NULL,
+  `number_of_votes` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `candidate`
+--
+
+INSERT INTO `candidate` (`id`, `candidate_name`, `partylist_id`, `position_id`, `number_of_votes`) VALUES
+(1, 'Jonathan', 1, 1, 1),
+(2, 'Jonathan2', 1, 2, 2),
+(3, 'Jonathan3', 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -42,8 +52,16 @@ CREATE TABLE `candidate` (
 
 CREATE TABLE `partylist` (
   `id` int(11) NOT NULL,
-  `party_name` varchar(100) NOT NULL
+  `party_name` varchar(100) NOT NULL,
+  `number_of_votes` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `partylist`
+--
+
+INSERT INTO `partylist` (`id`, `party_name`) VALUES
+(1, 'Teteng');
 
 -- --------------------------------------------------------
 
@@ -55,6 +73,14 @@ CREATE TABLE `positions` (
   `id` int(11) NOT NULL,
   `position_name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `positions`
+--
+
+INSERT INTO `positions` (`id`, `position_name`) VALUES
+(1, 'President'),
+(2, 'Vice President');
 
 -- --------------------------------------------------------
 
@@ -69,7 +95,8 @@ CREATE TABLE `voters` (
   `middle_initial` varchar(2) NOT NULL,
   `last_name` varchar(100) NOT NULL,
   `Course` varchar(100) NOT NULL,
-  `VoterPassword` int(25) NOT NULL
+  `VoterPassword` varchar(25) NOT NULL,
+  `is_voted` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -110,19 +137,19 @@ ALTER TABLE `voters`
 -- AUTO_INCREMENT for table `candidate`
 --
 ALTER TABLE `candidate`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `partylist`
 --
 ALTER TABLE `partylist`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `positions`
 --
 ALTER TABLE `positions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `voters`

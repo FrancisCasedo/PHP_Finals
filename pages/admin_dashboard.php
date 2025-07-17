@@ -1,3 +1,4 @@
+
 <?php require_once "../config.php";
 if (isset($_SESSION['student_number'])) {
     header("Location: ../login_page.php");
@@ -29,7 +30,7 @@ if (!isset($rows_voters) || !is_array($rows_voters)) {
 <?php
 // Party List CRUD Operations
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['AddParty'])) {
-    $party_name = $_POST['PartyName'];
+    $party_name = strip_tags($_POST['PartyName']);
     $sql = "INSERT INTO partylist (party_name) VALUES (:party_name)";
     $stmt = $conn->prepare($sql);
     $stmt->execute([':party_name' => $party_name]);
@@ -39,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['AddParty'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_party'])) {
     $id = $_POST['id'];
-    $party_name = $_POST['PartyName'];
+    $party_name = strip_tags($_POST['PartyName']);
     $sql = "UPDATE partylist SET party_name=:party_name WHERE id=:id";
     $stmt = $conn->prepare($sql);
     $stmt->execute([
@@ -51,12 +52,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_party'])) {
 }
 
 if (isset($_GET['delete_party'])) {
-    $id = $_GET['delete_party'];
-    $sql = "DELETE FROM partylist WHERE id=:id";
-    $stmt_d_party = $conn->prepare($sql);
-    $stmt_d_party->execute([':id' => $id]);
-    header("Location: admin_dashboard.php?section=party");
-    exit();
+        $id = $_GET['delete_party'];
+
+    try {
+        $sql = "SELECT * FROM candidate WHERE partylist_id = :id";
+        $stmt_check = $conn->prepare($sql);
+        $stmt_check->execute([':id' => $id]);
+
+        if ($stmt_check->rowCount() == 0) {
+            $sql = "DELETE FROM partylist WHERE id = :id";
+            $stmt_d_position = $conn->prepare($sql);
+            $stmt_d_position->execute([':id' => $id]);
+            header("Location: admin_dashboard.php?section=party");
+            exit();
+        } else {
+            $_SESSION['partylist_exception'] = "Cannot delete this party list because it has associated candidates.";
+            header("Location: admin_dashboard.php?section=party");
+            exit();
+        }
+
+    } catch (Exception $e) {
+        header("Location: admin_dashboard.php?section=party");
+        exit();
+    }
 }
 
 $edit_mode_party = false;
@@ -83,7 +101,7 @@ $rows_party_list = $stmt_party_list->fetchAll(PDO::FETCH_ASSOC);
 <!----------------------- POSITIONS MANAGEMENT ------------------------->
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_position'])) {
-    $position_name = $_POST['position_name'];
+    $position_name = strip_tags($_POST['position_name']);
     $sql = "INSERT INTO positions (position_name) VALUES (:position_name)";
     $stmt = $conn->prepare($sql);
     $stmt->execute([':position_name' => $position_name]);
@@ -95,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_position'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_position'])) {
     $id = $_POST['id'];
-    $position_name = $_POST['position_name'];
+    $position_name = strip_tags($_POST['position_name']);
     $sql = "UPDATE positions SET position_name=:position_name WHERE id=:id";
     var_dump($sql);
     $stmt = $conn->prepare($sql);
@@ -107,12 +125,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_position'])) {
     exit();
 }
 
+
 if (isset($_GET['delete_position'])) {
     $id = $_GET['delete_position'];
-    $sql = "DELETE FROM positions WHERE id=:id";
-    $stmt_d_position = $conn->prepare($sql);
-    $stmt_d_position->execute([':id' => $id]);
-    header("Location: admin_dashboard.php?section=position");
+
+    try {
+        $sql = "SELECT * FROM candidate WHERE position_id = :id";
+        $stmt_check = $conn->prepare($sql);
+        $stmt_check->execute([':id' => $id]);
+
+        if ($stmt_check->rowCount() == 0) {
+            $sql = "DELETE FROM positions WHERE id = :id";
+            $stmt_d_position = $conn->prepare($sql);
+            $stmt_d_position->execute([':id' => $id]);
+            header("Location: admin_dashboard.php?section=position");
+            exit();
+        } else {
+            $_SESSION['partylist_exception'] = "Cannot delete this position because it has associated candidates.";
+            header("Location: admin_dashboard.php?section=position");
+            exit();
+        }
+
+    } catch (Exception $e) {
+        header("Location: admin_dashboard.php?section=position");
+        exit();
+    }
+}
+
+
+if(isset($_POST['partylist_exception'])) {
+    $delete_partylist_exception = false;
+    header("Location: admin_dashboard.php?section=party");
+    exit();
 }
 
 $edit_mode_position = false;
@@ -140,9 +184,9 @@ $rows_positions = $stmt_positions->fetchAll(PDO::FETCH_ASSOC);
 <?php
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_candidate'])) {
-    $candidate_name = $_POST['candidate_name'];
-    $partylist_id = $_POST['candidate_partylist'];
-    $position_id = $_POST['candidate_position'];
+    $candidate_name = strip_tags($_POST['candidate_name']);
+    $partylist_id = strip_tags($_POST['candidate_partylist']);
+    $position_id = strip_tags($_POST['candidate_position']);
 
     $sql = "INSERT INTO candidate (candidate_name, partylist_id, position_id) VALUES (:candidate_name, :partylist_id, :position_id)";
     $stmt = $conn->prepare($sql);
@@ -171,10 +215,11 @@ if (isset($_GET['edit_candidate'])) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_candidate'])) {
-    $id = $_POST['id'];
-    $candidate_name = $_POST['candidate_name'];
-    $partylist_id = $_POST['candidate_partylist'];
-    $position_id = $_POST['candidate_position'];
+    $id = strip_tags($_POST['id']);
+    $candidate_name = strip_tags($_POST['candidate_name']);
+    $partylist_id = strip_tags($_POST['candidate_partylist']);
+    $position_id = strip_tags($_POST['candidate_position']);
+
 
     $sql = "UPDATE candidate SET candidate_name=:candidate_name, partylist_id=:partylist_id, position_id=:position_id WHERE id=:id";
     $stmt = $conn->prepare($sql);
@@ -189,6 +234,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_candidate'])) {
 }
 
 if (isset($_GET['delete_candidate'])) {
+
     $id = $_GET['delete_candidate'];
     $sql = "DELETE FROM candidate WHERE id=:id";
     $stmt_d_candidate = $conn->prepare($sql);
@@ -214,7 +260,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_voter'])) {
     $lastname = $_POST['lastname'];
     $course = $_POST['course'];
     $password = $_POST['voter_password'];
-    
+
     $sql = "INSERT INTO voters (student_number, first_name, middle_initial, last_name, Course,VoterPassword)
             VALUES (:student_no, :fname, :mi, :lastname, :course, :VoterPassword)";
     $stmt = $conn->prepare($sql);
@@ -237,7 +283,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_voter'])) {
     $lastname = $_POST['lastname'];
     $course = $_POST['course'];
     $VoterPassword = $_POST['voter_password'];
-    
+
     $sql = "UPDATE voters SET student_number=:student_no, first_name=:fname, middle_initial=:mi, last_name=:lastname, Course=:course, VoterPassword =:VoterPassword WHERE id=:id";
     $stmt = $conn->prepare($sql);
     $stmt->execute([
@@ -253,7 +299,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_voter'])) {
     exit();
 }
 
+
+
 if (isset($_GET['delete_voter'])) {
+    try {
+        $id = $_GET['delete_voter'];
+        $sql = "SELECT * FROM candidate WHERE student_number = :id";
+        $stmt_check = $conn->prepare($sql);
+        $stmt_check->execute([':id' => $id]);
+        if ($stmt_check->rowCount() > 0) {
+            $delete_voter_exception_1 = false;
+            header("Location: admin_dashboard.php?section=voters");
+        }
+    } catch (Exception $e) {
+        $delete_voter_exception_2 = false;
+        header("Location: admin_dashboard.php?section=voters");
+        exit();
+    }
     $id = $_GET['delete_voter'];
     $sql = "DELETE FROM voters WHERE ID=:id";
     $stmt_d_voter = $conn->prepare($sql);
@@ -291,12 +353,24 @@ function AddParty() {
 <div class="RightHeader">
     <h4><?php echo $edit_mode_party ? 'Edit Party' : 'Add Party'; ?></h4>
 </div>
-<div class="AddParty">
+<hr class="divider">
+<?php if (isset($_SESSION['partylist_exception'])) { ?>
+    <div class="error-message">
+        <h1><?php echo htmlspecialchars($_SESSION['partylist_exception']); ?></h1>
+        <form action="" method="POST">
+            <button type="submit" name="partylist_exception">Back</button>
+        </form>
+    </div>
+    <?php 
+    unset($_SESSION['partylist_exception']);
+    ?>
+<?php }else {?>
     <form action="" method="post">
         <input type="hidden" name="id" value="<?php echo isset($edit_party['id']) ? $edit_party['id'] : ''; ?>">
+
         <label for="PartyName">Party name</label><br>
-        <input type="text" name="PartyName" value="<?php echo isset($edit_party['party_name']) ? $edit_party['party_name'] : ''; ?>" required>
-        
+        <input type="text" name="PartyName" value="<?php echo isset($edit_party['party_name']) ? $edit_party['party_name'] : ''; ?>" required><br>
+
         <?php if ($edit_mode_party): ?>
             <button type="submit" name="update_party">Update</button>
             <a href="admin_dashboard.php?section=party">Cancel</a>
@@ -304,9 +378,9 @@ function AddParty() {
             <button type="submit" name="AddParty">Add</button>
         <?php endif; ?>
     </form>
-</div>
-<div class="PartyList">
-    <table name="table">
+        <?php }?>
+<div class="partytable-container">
+    <table name="partytable">
         <tr>
             <th>Party ID</th>
             <th>Party Name</th>
@@ -323,7 +397,7 @@ function AddParty() {
             </td>
             <td name="action">
                 <a href="?edit_party=<?php echo $row['id']; ?>">Edit</a> |
-                <a href="?delete_party=<?php echo $row['id']; ?>" onclick="return confirm('Are you sure you want to delete this party?')">Delete</a>
+                <a href="?delete_party=<?php echo $row['id']; ?>">Delete</a>
             </td>
         </tr>
         <?php } ?>
@@ -341,13 +415,27 @@ function AddPosition()
 {
     global $conn, $rows_positions, $edit_mode_position, $edit_position;
     ?>
-<h1>Add Position</h1>
+<div class="positionRightHeader">
+    <h4><?php echo 'Add Position'; ?></h4>
+</div>
+
 <hr class="divider">
+<?php if (isset($_SESSION['partylist_exception'])) { ?>
+    <div class="error-message">
+        <h1><?php echo htmlspecialchars($_SESSION['partylist_exception']); ?></h1>
+        <form action="" method="POST">
+            <button type="submit" name="partylist_exception">Back</button>
+        </form>
+    </div>
+    <?php
+    unset($_SESSION['partylist_exception']);
+    ?>
+<?php }else {?>
 <form method="post" action="">
     <input type="hidden" name="id" value="<?php echo isset($edit_position['id']) ? $edit_position['id'] : ''; ?>">
     <label>Position Name:</label><br>
     <input type="text" name="position_name" value = "<?php $edit_position['position_name'] ?>"required><br>
-    
+
         <?php if ($edit_mode_position): ?>
         <input type="submit" name="update_position" value="update_position">
         <a href="admin_dashboard.php?section=position">Cancel</a>
@@ -355,8 +443,9 @@ function AddPosition()
         <input type="submit" name="add_position" value="Add_position">
         <?php endif; ?>
 </form>
-<div class="table-container">
-    <table>
+<?php } ?>
+<div class="positiontable-container">
+    <table name="positiontable">
         <tr>
             <th>ID</th>
             <th>Position Name</th>
@@ -370,7 +459,7 @@ function AddPosition()
                             <td>{$row['position_name']}</td>
                             <td>
                                 <a href='?edit_position={$row['id']}'>Edit</a> |
-                                <a href='?delete_position={$row['id']}' onclick=\"return confirm('Are you sure?')\">Delete</a>
+                                <a href='?delete_position={$row['id']}' >Delete</a>
                             </td>
                         </tr>";
             }
@@ -387,7 +476,10 @@ function AddCandidate()
 {
     global $conn, $rows_candidate, $rows_positions, $rows_party_list, $edit_candidate, $edit_mode_candidate;
     ?>
-
+<div class="candidateRightHeader">
+    <h4><?php echo 'Add Candidate'; ?></h4>
+</div>
+<div class="add-voter-form-wrapper">
 <form method="post" action="">
     <input type="hidden" name="id" value="<?php echo isset($edit_candidate['id']) ? $edit_candidate['id'] : ''; ?>">
     <label>Candidate Name:</label><br>
@@ -417,9 +509,11 @@ function AddCandidate()
         <input type="submit" name="add_candidate" value="Add Candidate">
     <?php endif; ?>
 </form>
+</div>
 
 <?php
         $partylist_lookup = [];
+
         $stmt_partylist = $conn->prepare("SELECT id, party_name FROM partylist");
         $stmt_partylist->execute();
         foreach ($stmt_partylist->fetchAll(PDO::FETCH_ASSOC) as $party) {
@@ -429,24 +523,33 @@ function AddCandidate()
         $position_lookup = [];
         $stmt_positions = $conn->prepare("SELECT id, position_name FROM positions");
         $stmt_positions->execute();
+
         foreach ($stmt_positions->fetchAll(PDO::FETCH_ASSOC) as $pos) {
             $position_lookup[$pos['id']] = $pos['position_name'];
         }
         ?>
-<div class="table-container">
-    <table name="table">
+<div class="candidatetable-container">
+
+    <table name="candidatetable">
+
         <tr>
             <th>ID</th>
             <th>Candidate Name</th>
             <th>Party list</th>
             <th>Position</th>
+            <th>Action</th>
 
         </tr>
+
         <?php
         if (count($rows_candidate) > 0) {
+
             foreach ($rows_candidate as $row) {
+                
                 $party_name = isset($partylist_lookup[$row['partylist_id']]) ? $partylist_lookup[$row['partylist_id']] : 'Unknown';
+
                 $position_name = isset($position_lookup[$row['position_id']]) ? $position_lookup[$row['position_id']] : 'Unknown';
+
                 echo "<tr>
                 <td>{$row['id']}</td>
                 <td>{$row['candidate_name']}</td>
@@ -454,7 +557,7 @@ function AddCandidate()
                 <td>{$position_name}</td>
                 <td>
                     <a href='?edit_candidate={$row['id']}'>Edit</a> |
-                    <a href='?delete_candidate={$row['id']}' onclick=\"return confirm('Are you sure?')\">Delete</a>
+                    <a href='?delete_candidate={$row['id']}' >Delete</a>
                 </td>
             </tr>";
             }
@@ -467,37 +570,49 @@ function AddCandidate()
     <?php
     function AddVoters()
     {
-        global $edit_mode_voter, $edit_voter, $rows_voters;
+        global $edit_mode_voter, $edit_voter, $rows_voters, $delete_voter_exception_1, $delete_voter_exception_2;
         ?>
+        <div class="positionRightHeader">
+    <h4><?php echo 'Add Voters'; ?></h4>
+</div>
     <h1>
-        <?php echo $edit_mode_voter ? "Edit voter" : "Add Voter"; ?>
+        <?php echo $edit_mode_voter ? "Edit voter" : ""; ?>
     </h1>
-    <hr class="divider">
+
     <form method="POST" action="">
         <input type="hidden" name="id" value="<?php echo isset($edit_voter['id']) ? $edit_voter['id'] : ''; ?>">
-        
+
         <label>Student Number:</label><br>
-        <input type="text" name="student_no" value="<?php echo isset($edit_voter['student_no']) ? $edit_voter['student_no'] : '' ?>"><br>
+        <input type="text" name="student_no" value="<?php echo isset($edit_voter['student_no']) ? $edit_voter['student_no'] : '' ?>" required><br>
+
         <label>First Name:</label><br>
-        <input type="text" name="fname" value="<?php echo  isset($edit_voter['fname']) ? $edit_voter['fname'] : '' ?>" ><br>
+        <input type="text" name="fname" value="<?php echo  isset($edit_voter['fname']) ? $edit_voter['fname'] : '' ?>" required><br>
+
         <label>Middle Initial:</label><br>
-        <input type="text" name="mi" maxlength="1" value="<?php echo isset($edit_voter['mi']) ? $edit_voter['mi'] : '' ?>" ><br>
+        <input type="text" name="mi" maxlength="1" value="<?php echo isset($edit_voter['mi']) ? $edit_voter['mi'] : '' ?>" required><br>
+
         <label>Last Name:</label><br>
-        <input type="text" name="lastname" value="<?php echo isset($edit_voter['lastname']) ?$edit_voter['lastname']: '' ?>" ><br>
+        <input type="text" name="lastname" value="<?php echo isset($edit_voter['lastname']) ?$edit_voter['lastname']: '' ?>" required><br>
+
         <label>Course:</label><br>
-        <input type="text" name="course" value="<?php echo isset($edit_voter['course']) ? $edit_voter['course'] : '' ?>" ><br>
+        <input type="text" name="course" value="<?php echo isset($edit_voter['course']) ? $edit_voter['course'] : '' ?>" required><br>
+
         <label>Password:</label><br>
-        <input type="text" name="voter_password" value="<?php isset($edit_voter['VoterPassword']) ? $edit_voter['VoterPassword']: '' ?>" ><br>
+        <input type="text" name="voter_password" value="<?php isset($edit_voter['VoterPassword']) ? $edit_voter['VoterPassword']: '' ?>" required><br>
 
         <?php if ($edit_mode_voter): ?>
         <input type="submit" name="update_voter" value="update_voter">
         <a href="admin_dashboard.php?section=voters">Cancel</a>
+
         <?php else: ?>
         <input type="submit" name="add_voter" value="Add_voter">
         <?php endif; ?>
     </form>
-    <div class="table-container">
-        <table name="table">
+    </
+
+    <div class="add-voter-form-wrapper">
+    <div class="votertable-container">
+        <table name="votertable">
             <tr>
                 <th>Number</th>
                 <th>Student ID</th>
@@ -523,7 +638,7 @@ function AddCandidate()
                             <td>{$row['VoterPassword']}</td>
                             <td>
                                 <a href='?edit_voter={$row['id']}'>Edit</a> |
-            <a href='?delete_voter={$row['id']}' onclick=\"return confirm('Are you sure?')\">Delete</a>
+            <a href='?delete_voter={$row['id']}' >Delete</a>
                             </td>
                         </tr>";
                     $i++;
@@ -532,8 +647,9 @@ function AddCandidate()
             ?>
         </table>
 </div>
+</div>
     <?php } ?>
-    <?php
+<?php
     function main()
     { ?>
     <!DOCTYPE html>
@@ -592,15 +708,15 @@ function AddCandidate()
                     $section = 'party';
                 }
 
-                if ($section === 'party' || isset($_GET['btn1'])) {
+                if ($section === 'party' || isset($_GET['btn1']) ) {
                     AddParty();
                 } elseif ($section === 'position' || isset($_GET['btn2'])) {
                     AddPosition();
                 } elseif ($section === 'candidate' || isset($_GET['btn3'])) {
                     AddCandidate();
-                } elseif ($section === 'voters' || isset($_GET['btn4'])) {
+                } elseif ($section === 'voters' || isset($_GET['btn4']) ) {
                     AddVoters();
-}
+                }
                 ?>
             </div>
         </div>
