@@ -28,7 +28,6 @@ if (!isset($rows_voters) || !is_array($rows_voters)) {
 <!----------------------- PARTY MANAGEMENT ------------------------->
 
 <?php
-// Party List CRUD Operations
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['AddParty'])) {
     $party_name = strip_tags($_POST['PartyName']);
     $sql = "INSERT INTO partylist (party_name) VALUES (:party_name)";
@@ -141,7 +140,7 @@ if (isset($_GET['delete_position'])) {
             header("Location: admin_dashboard.php?section=position");
             exit();
         } else {
-            $_SESSION['partylist_exception'] = "Cannot delete this position because it has associated candidates.";
+            $_SESSION['position_exception'] = "Cannot delete this position because it has associated candidates.";
             header("Location: admin_dashboard.php?section=position");
             exit();
         }
@@ -153,9 +152,9 @@ if (isset($_GET['delete_position'])) {
 }
 
 
-if(isset($_POST['partylist_exception'])) {
+if(isset($_POST['position_exception'])) {
     $delete_partylist_exception = false;
-    header("Location: admin_dashboard.php?section=party");
+    header("Location: admin_dashboard.php?section=position");
     exit();
 }
 
@@ -302,20 +301,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_voter'])) {
 
 
 if (isset($_GET['delete_voter'])) {
-    try {
-        $id = $_GET['delete_voter'];
-        $sql = "SELECT * FROM candidate WHERE student_number = :id";
-        $stmt_check = $conn->prepare($sql);
-        $stmt_check->execute([':id' => $id]);
-        if ($stmt_check->rowCount() > 0) {
-            $delete_voter_exception_1 = false;
-            header("Location: admin_dashboard.php?section=voters");
-        }
-    } catch (Exception $e) {
-        $delete_voter_exception_2 = false;
-        header("Location: admin_dashboard.php?section=voters");
-        exit();
-    }
     $id = $_GET['delete_voter'];
     $sql = "DELETE FROM voters WHERE ID=:id";
     $stmt_d_voter = $conn->prepare($sql);
@@ -420,15 +405,15 @@ function AddPosition()
 </div>
 
 <hr class="divider">
-<?php if (isset($_SESSION['partylist_exception'])) { ?>
+<?php if (isset($_SESSION['position_exception'])) { ?>
     <div class="error-message">
-        <h1><?php echo htmlspecialchars($_SESSION['partylist_exception']); ?></h1>
+        <h1><?php echo htmlspecialchars($_SESSION['position_exception']); ?></h1>
         <form action="" method="POST">
-            <button type="submit" name="partylist_exception">Back</button>
+            <button type="submit" name="position_exception">Back</button>
         </form>
     </div>
     <?php
-    unset($_SESSION['partylist_exception']);
+    unset($_SESSION['position_exception']);
     ?>
 <?php }else {?>
 <form method="post" action="">

@@ -107,6 +107,13 @@ button[name="AddParty"] {
     margin-left: 2%;
 }
 
+label{
+    color: #486BA4;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding-left: 5%;
+}
+
 .PartyList {
     display: flex;
     flex-direction: row;
@@ -468,4 +475,241 @@ table[name="positiontable"] th {
     background-color: #f2f2f2;
     font-weight: bold;
     color: #486BA4;
+}
+
+label[for="PartyName"]{
+    color: #486BA4;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding-left: 5%;
+}
+input[type="text"][name="PartyName"] {
+    width: 50%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 5%;
+    margin-top: 1%;
+}
+button[type="submit"][name="AddParty"] {
+    background-color: #486BA4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-left: 8%;
+    
+}
+button[type="submit"][name="update_party"]{
+    background-color: #486BA4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-left: 5%;
+    width: 40%;
+    margin-top: 4%;
+
+}
+
+button[type="submit"][name="update_party"]:hover {
+    background-color: #36588d;
+    text-decoration: underline;
+}
+
+
+a.cancel-button {
+    background-color: #486BA4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-left: 2%;
+    width: 40%;
+    margin-top: 4%;
+    text-decoration: none;
+}
+
+a.cancel-button:hover {
+    border: 1px solid #486BA4; 
+    text-decoration: underline;
+}
+
+.error-message {
+    background-color: #486BA4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-left: 1%;
+}
+
+button[type="submit"][name="partylist_exception"] {
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-left: 1%;
+}
+
+button[type="submit"][name="partylist_exception"]:hover {
+    background-color: #36588d;
+    color: white;
+    text-decoration: underline;
+}
+button[type="submit"][name="position_exception"] {
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-left: 1%;
+}
+
+button[type="submit"][name="position_exception"]:hover {
+    background-color: #36588d;
+    color: white;
+    text-decoration: underline;
+}
+
+label[for="PositionName"] {
+    color: #486BA4;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding-left: 5%;
+}
+
+input[type="text"][name="position_name"] {
+    width: 50%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 5%;
+    margin-top: 1%;
+}
+
+input[type="submit"][name="add_position"] {
+    background-color: #486BA4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-left: 5%;
+    width: 40%;
+    margin-top: 4%;
+
+
+}
+
+input[type="submit"],[name="update_position"] {
+    background-color: #486BA4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-left: 5%;
+    width: 40%;
+    margin-top: 4%;
+}
+
+label[for="CandidateName"] {
+    color: #486BA4;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding-left: 5%;
+}
+
+input[type="text"][name="candidate_name"] {
+    width: 50%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 5%;
+    margin-bottom: 2.5%;
+    margin-top: 1%;
+}
+
+label[for="Partylist"] {
+    color: #486BA4;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding-left: 5%;
+    margin-top: 2.5%;
+}
+
+select[name="candidate_partylist"] {
+    width: 50%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 5%;
+    margin-bottom: 2.5%;
+    margin-top: 1%;
+}
+
+label[for="Position"] {
+    color: #486BA4;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding-left: 5%;
+    padding-top: 20%;
+}
+
+select[name="candidate_position"] {
+    width: 50%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 5%;
+    margin-bottom: 2.5%;
+    margin-top: 1%;
+}
+
+label[for=StudentNumber],[for="FirstName"],
+[for="MiddleInitial"],[for="LastName"],[for="Course"],[for="Password"] {
+    color: #486BA4;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding-left: 5%;
+    margin-top: 2.5%;
+}
+input[type="text"][name="student_no"],
+input[type="text"][name="fname"],
+input[type="text"][name="mi"],
+input[type="text"][name="lastname"],
+input[type="text"][name="course"],
+input[type="text"][name="voter_password"] {
+    width: 50%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 5%;
+    margin-bottom: 2.5%;
+    margin-top: 1%;
+}
+
+
+h1.EditVoter {
+    color: #486BA4;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-top: 2%;
+    margin-left: 5%;
 }
