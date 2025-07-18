@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['is_admin'] = true;
         header("Location: ./pages/admin_dashboard.php");
         exit();
-    } else {
+    } else {    
         try {
             $query = "SELECT student_number, VoterPassword, is_voted FROM voters WHERE student_number = :student_number";
             $stmt = $conn->prepare($query);

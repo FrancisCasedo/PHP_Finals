@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['is_voted'] = 1;
 
         echo "Votes submitted successfully!";
-        header("Location: ./login_page.php");
+        header("Location: ../login_page.php");
         exit();
     } catch (PDOException $e) {
         error_log("Error submitting votes: " . $e->getMessage());
