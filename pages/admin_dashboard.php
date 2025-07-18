@@ -153,7 +153,6 @@ if (isset($_GET['delete_position'])) {
 
 
 if(isset($_POST['position_exception'])) {
-    $delete_partylist_exception = false;
     header("Location: admin_dashboard.php?section=position");
     exit();
 }
@@ -330,6 +329,39 @@ $result_voters = $stmt_voters->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!----------------------- VOTER MANAGEMENT ------------------------->
 
+<!----------------------- CLEAR DATABASE ------------------------->
+
+<?php
+if (isset($_GET['confirm_delete'])) {
+    global $conn;
+    $tables = ['voters', 'candidate', 'positions', 'partylist'];
+
+    try {
+        $conn->exec("SET FOREIGN_KEY_CHECKS = 0");
+
+        foreach ($tables as $table) {
+            $sql = "TRUNCATE TABLE `$table`";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+        }
+
+        $conn->exec("SET FOREIGN_KEY_CHECKS = 1");
+        $_SESSION['clear_database_success'] = true;
+        header("Location: admin_dashboard.php?section=clear_database");
+        exit();
+    } catch (PDOException $e) {
+        $conn->exec("SET FOREIGN_KEY_CHECKS = 1");
+
+        error_log("Database clear error: " . $e->getMessage());
+        $_SESSION['clear_database_exception'] = "Error clearing database: " . htmlspecialchars($e->getMessage());
+
+        header("Location: admin_dashboard.php?section=clear_database");
+        exit();
+    }
+}
+?>
+
+<!----------------------- CLEAR DATABASE ------------------------->
 
 <?php
 function AddParty() {
@@ -394,6 +426,8 @@ function AddParty() {
     </table>
 </div>
 <?php } ?>
+
+
 
 <?php
 function AddPosition()
@@ -682,7 +716,6 @@ function getMostVotesParty($conn) {
 }
 ?>
 
-
     <?php function Results(){
         global $conn;
         ?>
@@ -712,6 +745,37 @@ function getMostVotesParty($conn) {
     ?>
 
     <?php } ?>
+
+<?php function delete_database(){
+    global $conn; ?>
+    <div class="RightHeader">
+    <h4>Clear Database</h4>
+</div>
+    <form action="" submit = "POST">
+        <?php if (isset($_SESSION['clear_database_exception'])) { ?>
+            <div class="error-message">
+        <h1><?php echo htmlspecialchars($_SESSION['clear_database_exception']); ?></h1>
+        <form action="" method="POST">
+            <button type="submit" name="clear_database_exception">Back</button>
+        </form>
+    </div>
+    <?php unset($_SESSION['clear_database_exception']);?>
+<?php } else if(isset($_SESSION['clear_database_success'] )){ ?>
+    <div class="success-message">
+        <h1>Database cleared successfully!</h1>
+        <form action="" method="POST">
+            <button type="submit" name="clear_database_success">Back</button>
+        </form>
+        <?php unset($_SESSION['clear_database_success']); ?>
+    </div>
+    <?php } else { ?>
+    <form action="" submit = "POST">
+        <h1>Are you sure you want to clear the database?</h1>
+        <button type="submit" name="confirm_delete">Yes, delete</button>
+        <a href="admin_dashboard.php?section=party">No, go back</a>
+    </form>
+    <?php } ?>
+<?php  } ?>
 <?php function main()
     { ?>
     <!DOCTYPE html>
@@ -780,8 +844,8 @@ function getMostVotesParty($conn) {
                     AddVoters();
                 }elseif ($section === 'voters' || isset($_GET['btn5']) ) {
                     Results();
-                }elseif ($section === 'voters' || isset($_GET['btn6']) ) {
-                    Results();
+                }elseif ($section === 'clear_database' || isset($_GET['btn6']) ) {
+                    delete_database();
                 }
                 ?>
             </div>
