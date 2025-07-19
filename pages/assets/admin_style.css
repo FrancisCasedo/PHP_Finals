@@ -713,3 +713,45 @@ h1.EditVoter {
     margin-top: 2%;
     margin-left: 5%;
 }
+
+.success-message{
+    border: 1px solid beige;
+
+}
+
+
+form h1[name = "clear-message"] {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #486BA4;
+    margin-left: 5%;
+}
+
+
+button[name="confirm_delete"],button[name="clear_database_success"] {
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;;
+    background-color: #486BA4;
+    margin-left: 5%;
+}
+.success-message h1 {
+    color:#486BA4;
+    margin-left: 5%;
+    font-size: 1.5rem;
+}
+
+button[name = "clear_database_exception"] {
+    padding: 10px 20px;
+    background-color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;;
+    color: #486BA4;
+}

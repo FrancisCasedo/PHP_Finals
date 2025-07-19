@@ -19,7 +19,6 @@ function getCandidatesByPosition($conn, $position_id) {
     $stmt->execute(['position_id' => $position_id]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
 function getPartyList($conn) {
     try {
         $sql = "SELECT * FROM partylist";
@@ -31,7 +30,6 @@ function getPartyList($conn) {
         return [];
     }
 }
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $sql_check = "SELECT is_voted FROM voters WHERE student_number = :student_number";
@@ -77,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['is_voted'] = 1;
 
         echo "Votes submitted successfully!";
-        header("Location: ../login_page.php");
+        header("Location: ./login_page.php");
         exit();
     } catch (PDOException $e) {
         error_log("Error submitting votes: " . $e->getMessage());
@@ -91,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="user_dashboard_style.css">
+    <link rel="stylesheet" href="./assets/user_dashboard_style.css">
     <title>user_dashboard</title>
 </head>
 <body>
@@ -133,7 +131,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo "<p>No party lists available</p>";
         }
-        echo '<button type="submit">Submit Votes</button>';
+
+        echo '<button type="submit" class="vote-submit-btn">Submit Votes</button>';
+
         ?>
     </form>
 </body>

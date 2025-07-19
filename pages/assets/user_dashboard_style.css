@@ -2,24 +2,80 @@ table {
     border-collapse: collapse;
     width: 100%;
     max-width: 600px;
-    margin: 20px 0;
+    margin: 20px auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
 }
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
+
 th {
-    background-color: #f2f2f2;
+    background-color: #486ba4;
+    color: white;
+    padding: 12px 10px;
+    text-align: left;
+    font-size: 16px;
 }
+
+td {
+    border-top: 1px solid #ddd;
+    padding: 10px;
+    font-size: 15px;
+    background-color: #fff;
+    transition: background-color 0.3s;
+}
+
+tr:hover td {
+    background-color: #f1f5fc;
+}
+
 .submit_btn {
-    margin-top: 20px;
-    padding: 10px 20px;
+    display: block;
+    margin: 20px auto 0;
+    padding: 12px 24px;
     background-color: #486ba4;
     color: white;
     border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
+
+
 .submit_btn:hover {
+    background-color: #3b5c8a;
+    transform: translateY(-2px);
+}
+
+.submit_btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(72, 107, 164, 0.4);
+}
+
+.vote-submit-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 12px 24px;
     background-color: #486ba4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.vote-submit-btn:hover {
+    background-color: #3b5c8a;
+    transform: translateY(-2px);
+}
+
+.vote-submit-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(72, 107, 164, 0.4);
 }

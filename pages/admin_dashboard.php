@@ -754,26 +754,33 @@ function getMostVotesParty($conn) {
     <form action="" submit = "POST">
         <?php if (isset($_SESSION['clear_database_exception'])) { ?>
             <div class="error-message">
-        <h1><?php echo htmlspecialchars($_SESSION['clear_database_exception']); ?></h1>
+        <h1 name = "Clear_database"><?php echo htmlspecialchars($_SESSION['clear_database_exception']); ?></h1>
         <form action="" method="POST">
             <button type="submit" name="clear_database_exception">Back</button>
         </form>
+
     </div>
+
     <?php unset($_SESSION['clear_database_exception']);?>
 <?php } else if(isset($_SESSION['clear_database_success'] )){ ?>
+
     <div class="success-message">
-        <h1>Database cleared successfully!</h1>
+        <h1 name = "cleared-message">Database cleared successfully!</h1>
         <form action="" method="POST">
             <button type="submit" name="clear_database_success">Back</button>
         </form>
         <?php unset($_SESSION['clear_database_success']); ?>
     </div>
+
     <?php } else { ?>
+        <div name = "clear-database">
     <form action="" submit = "POST">
-        <h1>Are you sure you want to clear the database?</h1>
+        <h1 name = "clear-message">Are you sure you want to clear the database?</h1>
         <button type="submit" name="confirm_delete">Yes, delete</button>
-        <a href="admin_dashboard.php?section=party">No, go back</a>
+        <a href="admin_dashboard.php?section=party" name = "go_back">No, go back</a>
     </form>
+    </div>
+
     <?php } ?>
 <?php  } ?>
 <?php function main()
