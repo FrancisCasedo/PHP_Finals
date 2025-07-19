@@ -805,34 +805,45 @@ function getMostVotesParty($conn)
 {
     global $conn;
     ?>
-<h2>Election Results</h2>
+    <div class="results-container">
+        <h2>Election Results</h2>
+        <link rel="stylesheet" href="./assets/results_style.css">
 
-<?php $positions = getPositions($conn);
+
+        <?php
+        $positions = getPositions($conn);
         if (count($positions) > 0) {
             foreach ($positions as $position) {
                 echo "<h3>Candidate with Most Votes for " . htmlspecialchars($position['position_name']) . ":</h3>";
                 $most_votes = getMostVotesCandidate($conn, $position['id']);
                 foreach ($most_votes as $candidate) {
-                    echo htmlspecialchars($candidate['candidate_name']) . " (" .
+                    echo "<p class='top-result'>" .
+                        htmlspecialchars($candidate['candidate_name']) . " (" .
                         htmlspecialchars($candidate['party_name']) . ") - " .
                         htmlspecialchars($candidate['number_of_votes']) . " votes</p>";
                 }
             }
+        } else {
+            echo "<p>No positions found in the system.</p>";
         }
 
-        echo "<h3>Party with Most Votes: </h3>";
+        echo "<h3>Party with Most Votes:</h3>";
 
         $most_votes_party = getMostVotesParty($conn);
         if (count($most_votes_party) > 0) {
             foreach ($most_votes_party as $party) {
-                echo htmlspecialchars($party['party_name']) . " - " .
-                    htmlspecialchars($party['number_of_votes']) . " votes";
+                echo "<p class='top-result'>" .
+                    htmlspecialchars($party['party_name']) . " - " .
+                    htmlspecialchars($party['number_of_votes']) . " votes</p>";
             }
+        } else {
+            echo "<p>No party vote data found.</p>";
         }
         ?>
-
-<?php } ?>
-
+    </div>
+<?php
+}
+?>
 <?php function delete_database()
 {
     global $conn; ?>

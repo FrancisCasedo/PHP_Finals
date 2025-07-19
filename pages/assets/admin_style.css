@@ -755,3 +755,42 @@ button[name = "clear_database_exception"] {
     margin: 5px;;
     color: #486BA4;
 }
+
+.results-container {
+    width: 90%;
+    margin: 30px auto;
+    padding: 25px;
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.results-container h2 {
+    font-size: 28px;
+    color: #1f2937;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.results-container h3 {
+    font-size: 20px;
+    color: #374151;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.results-container p {
+    font-size: 16px;
+    color: #486BA4;
+    margin-left: 20px;
+    margin-bottom: 5px;
+}
+
+.results-container .top-result {
+    font-weight: bold;
+    color: #486BA4;
+}
